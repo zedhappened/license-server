@@ -4,7 +4,7 @@ const requestIp = require("request-ip");
 const cors = require("cors");
 
 require("dotenv").config();
-const PORT = parseInt(process.env.PORT);
+const PORT = parseInt(process.env.PORT) || 3001;
 
 const app = express();
 app.use(cors());
@@ -21,6 +21,9 @@ app.use("/generateFingerprint", async (req, res) => {
   res.json({ fingerprint });
 });
 
-app.listen(PORT, () => {
+const server = app.listen(PORT, () => {
   console.log(`Server is running on PORT ${PORT}`);
 });
+
+server.keepAliveTimeout = 120 * 1000;
+server.headersTimeout = 120 * 1000;
