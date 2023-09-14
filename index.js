@@ -19,9 +19,9 @@ app.use(cors());
 app.post("/generateFingerprint", async (req, res) => {
   const ip = requestIp.getClientIp(req);
   const useragent = req.headers["user-agent"];
-  const network = req.body;
+  const network = JSON.stringify(req.body).toString();
 
-  const fingerprint = md5(ip + useragent + network.toString()).toString();
+  const fingerprint = md5(ip + useragent + network).toString();
 
   res.json({ fingerprint });
 });
