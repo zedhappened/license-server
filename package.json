@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
+  "type": "module",
   "scripts": {
     "start": "nodemon start"
   },
@@ -15,6 +16,9 @@
     "crypto-js": "^4.1.1",
     "dotenv": "^16.3.1",
     "express": "^4.18.2",
+    "mongodb": "^6.1.0",
+    "mongoose": "^7.5.1",
+    "nanoid": "^5.0.1",
     "nodemon": "^3.0.1"
   }
 }
