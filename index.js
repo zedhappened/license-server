@@ -1,8 +1,7 @@
 const express = require("express");
 const md5 = require("crypto-js/md5");
-const requestIp = require("request-ip");
-var bodyParser = require("body-parser");
 const cors = require("cors");
+var bodyParser = require("body-parser");
 
 require("dotenv").config();
 const PORT = parseInt(process.env.PORT) || 3001;
@@ -17,11 +16,13 @@ app.use(
 app.use(cors());
 
 app.post("/generateFingerprint", async (req, res) => {
-  const ip = requestIp.getClientIp(req);
-  const useragent = req.headers["user-agent"];
-  const network = JSON.stringify(req.body).toString();
 
-  const fingerprint = md5(ip + useragent + network).toString();
+  console.log(req.body);
+
+  const macs = req.body.macs;
+  const uuid = req.body.uuid;
+
+  const fingerprint = md5(macs, uuid).toString();
 
   res.json({ fingerprint });
 });
