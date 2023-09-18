@@ -1,6 +1,11 @@
 import { nanoid } from "nanoid";
-import crypto from "crypto-js";
+import CryptoJS from "crypto-js";
 import { License } from "../models/license.model.js";
+import { configDotenv } from "dotenv";
+
+configDotenv();
+
+const AES_SECRET = process.env.AES_SECRET;
 
 export const createLicense = async (req, res) => {
   const license = nanoid(64);
@@ -9,7 +14,10 @@ export const createLicense = async (req, res) => {
 };
 
 export const validate = async (req, res) => {
-  const { macs, uuid, license } = req.body;
+  const { cipherText } = req.body;
+
+  var bytes = CryptoJS.AES.decrypt(cipherText, AES_SECRET);
+  var { macs, uuid, license } = JSON.parse(bytes.toString(CryptoJS.enc.Utf8));
 
   try {
     const existingLicense = await License.findOne({ license });
@@ -19,7 +27,7 @@ export const validate = async (req, res) => {
     if (existingLicense.expiry < new Date())
       return res.status(404).send("Expired license");
 
-    const fingerprint = crypto.MD5(macs, uuid).toString();
+    const fingerprint = CryptoJS.MD5(macs, uuid).toString();
 
     if (existingLicense.fingerprint !== fingerprint)
       return res
