@@ -18,7 +18,7 @@ export const unlink = async (req, res) => {
     fingerprint: "",
   });
 
-  res.status(200).send({ ...key, fingerprint: "" });
+  res.status(200).send(req.params.id);
 };
 
 export const createLicense = async (req, res) => {
