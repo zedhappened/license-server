@@ -36,29 +36,36 @@ export const validate = async (req, res) => {
   try {
     const existingLicense = await License.findOne({ license });
 
-    if (!existingLicense) return res.status(404).send("Invalid license");
+    if (!existingLicense)
+      return res
+        .status(404)
+        .json({ approved: false, message: "Invalid license" });
 
     if (existingLicense.expiry < new Date())
-      return res.status(404).send("Expired license");
+      return res
+        .status(404)
+        .json({ approved: false, message: "Expired license" });
 
     const fingerprint = CryptoJS.MD5(macs, uuid).toString();
 
     if (!existingLicense.fingerprint) {
       existingLicense.fingerprint = fingerprint;
       existingLicense.save();
-      return res.json({ license });
+      return res.json({ approved: true, license });
     }
 
     if (existingLicense.fingerprint !== fingerprint)
-      return res
-        .status(404)
-        .send(
-          "License already in use! Kindly remove access from the other device by logging into the portal."
-        );
+      return res.status(404).json({
+        approved: false,
+        message:
+          "License already in use! Kindly remove access from the other device by logging into the portal.",
+      });
 
-    return res.json({ license });
+    return res.json({ approved: true, license });
   } catch (error) {
     console.log(error);
-    return res.status(500).send("Internal Server Error");
+    return res
+      .status(500)
+      .json({ approved: false, message: "Internal Server Error" });
   }
 };
